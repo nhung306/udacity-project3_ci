@@ -4,44 +4,30 @@ orbs:
   # Declare a dependency on the welcome-orb
   welcome: circleci/welcome-orb@0.4.1
 # Orchestrate or schedule a set of jobs
-commands:
-  sayhello:
-    description: "A very simple command for demonstration purposes"
-    parameters:
-      to:
-        type: string
-        default: "Hello World"
-    steps:
-      - run: echo << parameters.to >> > ~/output.txt
-      - run: 
-          name: on error
-          command: echo "Hello Error!" > ~/output.txt
-          when: on_fail
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - output.txt
 jobs:
-  print_output:
+  build:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - sayhello:
-          to: nhung
-  print_file:
+      - checkout
+      - run: npm i
+      - run: npm run lint
+  analyze:
     docker:
       - image: circleci/node:13.8.0
     steps:
-      - attach_workspace:
-          at: ~/
-      - run: cat ~/output.txt
+      - checkout
+      - run: npm audit
 workflows:
   # Name the workflow "welcome"
   welcome:
     # Run the welcome/run job in its own container
     jobs:
       - welcome/run
-      - print_output
-      - print_file:
+      - build
+      - test:
           requires:
-            - print_output
+            - build
+      - analyze:
+          requires:
+            - test
