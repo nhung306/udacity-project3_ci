@@ -12,7 +12,7 @@ commands:
         type: string
         default: "Hello World"
     steps:
-      - run: << parameters.to >> 
+      - run: echo << parameters.to >> > ~/output.txt
       - run: 
           name: on error
           command: echo "Hello Error!" > ~/output.txt
