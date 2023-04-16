@@ -27,7 +27,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - sayhello:
-          to: exit 1      
+          to: nhung
   print_file:
     docker:
       - image: circleci/node:13.8.0
